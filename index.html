@@ -1,134 +1,388 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gabriel Antonio Rivera Morales | Legado</title>
-    <style>
-        /* Diseño base optimizado para celulares y alto contraste bajo el sol */
-        body {
-            background-color: #121212; /* Fondo oscuro profundo */
-            color: #e0e0e0; /* Texto claro de alta legibilidad */
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-        }
+  <meta charset="UTF-8">
+  <!-- initial-scale=1 SIN maximum-scale: el zoom debe poder usarse (accesibilidad) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        .container {
-            max-width: 600px; /* Ancho perfecto para pantallas móviles */
-            margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+  <!-- Sincroniza la barra del navegador con el fondo (sin destello claro al cargar) -->
+  <meta name="theme-color" content="#0A0A0A">
+  <meta name="color-scheme" content="dark">
 
-        /* Cabecera principal (Lo primero que se ve al escanear el QR) */
-        header {
-            text-align: center;
-            padding: 40px 0 20px 0;
-            border-bottom: 1px solid #333;
-        }
+  <meta name="description" content="Memorial digital y cápsula del tiempo de Gabriel Antonio Rivera Morales.">
 
-        h1 {
-            color: #d4af37; /* Dorado solemne */
-            font-size: 1.8rem;
-            margin: 10px 0 5px 0;
-            letter-spacing: 1px;
-        }
+  <!-- Vista previa digna al compartir por WhatsApp / Telegram -->
+  <meta property="og:type" content="profile">
+  <meta property="og:title" content="Gabriel Antonio Rivera Morales | Legado">
+  <meta property="og:description" content="Cápsula del tiempo familiar. Estuve aquí, existí, esto fue lo que amé.">
+  <!-- Reemplaza por una imagen real autoalojada cuando exista (assets/retrato.jpg) -->
+  <meta property="og:image" content="assets/retrato.jpg">
 
-        .fechas {
-            font-size: 1.1rem;
-            color: #a0a0a0;
-            margin: 0 0 15px 0;
-            font-weight: 500;
-        }
+  <!-- Decisión reversible (privacidad del difunto): evita el rastreo por buscadores.
+       Si la familia prefiere que el memorial sea descubrible, elimina esta línea. -->
+  <meta name="robots" content="noindex, nofollow">
 
-        .epígrafe {
-            font-style: italic;
-            color: #b0b0b0;
-            font-size: 1rem;
-            max-width: 80%,;
-            margin: 0 auto;
-        }
+  <!-- Único hint de red necesario: calienta el DNS de YouTube para cuando se pulse "reproducir".
+       Las imágenes van autoalojadas, así que no hay otros dominios externos en la carga. -->
+  <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
 
-        /* Secciones del Memorial */
-        section {
-            padding: 30px 0;
-            border-bottom: 1px solid #222;
-        }
+  <title>Gabriel Antonio Rivera Morales | Legado</title>
 
-        h2 {
-            color: #d4af37;
-            font-size: 1.3rem;
-            margin-top: 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+  <style>
+    /* ===========================================================
+       PROYECTO LEGADO — Monumento digital estático
+       Todo el CSS vive aquí. Cero archivos externos. Cero fuentes
+       descargadas. Cero frameworks. Para cambiar la identidad
+       visual completa, edita solo las variables de :root.
+       =========================================================== */
 
-        p {
-            font-size: 1.05rem;
-            text-align: justify;
-        }
+    /* --- Reset mínimo --- */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body, h1, h2, p, blockquote, figure { margin: 0; }
 
-        /* Contenedor optimizado para Videos de YouTube Incrustados */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* Relación de aspecto 16:9 */
-            height: 0;
-            overflow: hidden;
-            max-width: 100%;
-            background-color: #000;
-            margin-top: 15px;
-            border-radius: 4px;
-        }
+    /* --- Tokens de diseño: el único lugar donde cambiar colores, fuentes y medidas --- */
+    :root {
+      /* Paleta Dark Mode resistente a la luz solar directa */
+      --bg:      #0A0A0A;   /* fondo casi negro (alternativa OLED pura: #000000) */
+      --surface: #141414;   /* superficie del contenedor de video / tarjetas */
+      --text:    #F5F5F5;   /* texto principal: nombre, cuerpo, fechas */
+      --muted:   #B8B8B8;   /* texto secundario: pie, descripciones, metadatos */
+      --gold:    #C9A227;   /* bronce funerario: SOLO títulos grandes y filete.
+                               Si bajo el sol se lava, sube luminancia hacia #E8C04A */
+      --border:  #2A2A2A;   /* filetes y separadores sutiles */
 
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
+      /* Tipografía del sistema (sin peticiones HTTP).
+         Serif (monumental, "tallado") para nombre y encabezados.
+         Sans (legible en pantalla) para el cuerpo. */
+      --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+                    Georgia, "Times New Roman", serif;
+      --font-sans:  system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    "Helvetica Neue", Arial, sans-serif;
 
-        /* Pie de página */
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            font-size: 0.85rem;
-            color: #666;
-        }
-    </style>
+      /* Medidas */
+      --maxw: 640px;                          /* ancho del monumento */
+      --pad:  clamp(20px, 5vw, 32px);         /* margen lateral fluido */
+      --gap:  clamp(2rem, 6vw, 3rem);         /* aire vertical entre secciones */
+    }
+
+    /* --- Base --- */
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.75;
+      /* Lienzo único y continuo, sin tarjetas: como una inscripción */
+    }
+
+    .memorial {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 var(--pad);
+    }
+
+    /* ===========================================================
+       LÍNEA DE FLOTACIÓN — lo único visible al escanear el QR.
+       Ocupa casi toda la pantalla para inducir una pausa solemne.
+       =========================================================== */
+    header {
+      min-height: 88vh;       /* respaldo para navegadores antiguos */
+      min-height: 88svh;      /* svh maneja la barra del móvil sin saltos */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* AQUÍ puedes insertar el retrato del difunto, si lo deseas, justo antes del <h1>.
+       Para máxima velocidad, inclúyelo como imagen pequeña en línea (data-URI Base64). */
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 7vw, 3rem);
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      text-wrap: balance;     /* equilibra el salto de línea; navegadores viejos lo ignoran */
+    }
+
+    .fechas {
+      font-family: var(--font-sans);
+      font-size: clamp(1rem, 4vw, 1.25rem);
+      letter-spacing: 0.15em; /* "1979 — 2100" leído como inscripción */
+      color: var(--text);     /* dato esencial: nunca atenuado */
+      margin-top: 1.25rem;
+    }
+    .fechas time { white-space: nowrap; }
+
+    .filete {
+      width: 64px;
+      height: 2px;
+      border: 0;
+      background-color: var(--gold);
+      margin: 1.75rem auto;
+    }
+
+    .epigrafe {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1.05rem, 3vw, 1.25rem);
+      line-height: 1.5;
+      max-width: 32ch;        /* medida ideal para una cita */
+      color: var(--text);
+    }
+
+    /* ===========================================================
+       SECCIONES DE CONTENIDO
+       Cada bloque es independiente: borra cualquiera y el resto
+       sigue intacto. Para añadir uno nuevo, copia un <section>.
+       =========================================================== */
+    main > article,
+    main > section {
+      border-top: 1px solid var(--border);
+      padding: var(--gap) 0;
+    }
+
+    h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.15rem, 4vw, 1.4rem);
+      font-weight: 600;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.25rem;
+    }
+
+    p {
+      font-size: 1.125rem;    /* 18px: mayor es mejor bajo el sol */
+      line-height: 1.75;
+      text-align: left;       /* nunca justificado */
+      max-width: 62ch;        /* longitud de línea legible */
+      text-wrap: pretty;      /* evita líneas viudas; degrada con gracia */
+    }
+
+    /* --- Galería (cuando se active): cuadrícula simple y responsiva --- */
+    .galeria-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.75rem;
+    }
+    figure img { display: block; width: 100%; height: auto; border-radius: 2px; }
+    figcaption { color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; }
+
+    /* ===========================================================
+       VIDEO — patrón de "fachada".
+       Se muestra un cartel ligero; el iframe de YouTube solo se
+       crea al primer toque, ahorrando cientos de KB en la carga.
+       =========================================================== */
+    .video-box {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      margin-bottom: 0.75rem;
+    }
+    .video-trigger {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      background-color: var(--surface);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+    .video-trigger:hover,
+    .video-trigger:focus-visible { border-color: var(--gold); }
+
+    /* Círculo con triángulo de "reproducir", dibujado en CSS (sin imágenes) */
+    .video-play {
+      width: 64px;
+      height: 64px;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-play::after {
+      content: "";
+      border-style: solid;
+      border-width: 11px 0 11px 18px;
+      border-color: transparent transparent transparent var(--gold);
+      margin-left: 4px;       /* centrado óptico del triángulo */
+    }
+
+    /* El iframe inyectado al pulsar reproducir ocupa el mismo recuadro 16:9 */
+    .video-frame { width: 100%; height: 100%; border: 0; border-radius: 2px; }
+
+    /* ===========================================================
+       PIE
+       =========================================================== */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: var(--gap) 0;
+    }
+    footer small { color: var(--muted); font-size: 0.85rem; letter-spacing: 0.03em; }
+
+    /* --- Accesibilidad: foco visible para navegación por teclado --- */
+    a, button { color: inherit; }
+    a:focus-visible,
+    button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+    a { text-decoration-color: var(--gold); }
+
+    /* --- Respeto por quien prefiere menos movimiento (este sitio no anima de todos modos) --- */
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        
-        <header>
-            <h1>Gabriel Antonio Rivera Morales</h1>
-            <div class="fechas">1979 – 2100</div>
-            <p class="epígrafe">"Estuve aquí, existí, esto fue lo que amé."</p>
-        </header>
+  <!--
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║  MANUAL DE EDICIÓN — LÉEME ANTES DE MODIFICAR ESTE ARCHIVO            ║
+    ╠══════════════════════════════════════════════════════════════════════╣
+    ║  No necesitas saber programar. Edita solo el texto entre las         ║
+    ║  etiquetas. Guarda el archivo y súbelo a GitHub.                     ║
+    ║                                                                      ║
+    ║  • CAMBIAR NOMBRE Y FECHAS:                                          ║
+    ║      Edita el bloque <header> (más abajo). En las fechas, cambia     ║
+    ║      tanto el número visible como el valor datetime="AAAA".          ║
+    ║                                                                      ║
+    ║  • CAMBIAR LOS COLORES:                                              ║
+    ║      Edita las variables dentro de :root (en la sección <style>).    ║
+    ║      Un solo cambio se refleja en todo el documento.                ║
+    ║                                                                      ║
+    ║  • AÑADIR FOTOS:                                                     ║
+    ║      1) Sube las imágenes optimizadas a la carpeta /assets del       ║
+    ║         repositorio.                                                 ║
+    ║      2) Descomenta el bloque <section id="galeria"> (quita las       ║
+    ║         marcas de comentario que lo rodean) y copia un <figure>      ║
+    ║         por cada foto, cambiando el nombre del archivo y el texto    ║
+    ║         alt.                                                         ║
+    ║                                                                      ║
+    ║  • PONER EL VIDEO:                                                   ║
+    ║      Reemplaza la palabra VIDEO_ID por el identificador real del     ║
+    ║      video de YouTube. Son los 11 caracteres que aparecen tras       ║
+    ║      "v=" en la dirección del video. Aparece en DOS lugares dentro   ║
+    ║      de <section id="video">: en data-id y en el enlace de respaldo. ║
+    ║                                                                      ║
+    ║  • AÑADIR UNA SECCIÓN NUEVA:                                         ║
+    ║      Copia un bloque <section> completo y cambia su id y su texto.   ║
+    ║                                                                      ║
+    ║  REGLA DE ORO: si borras un bloque entero, el resto sigue            ║
+    ║  funcionando. No hay nada externo que se pueda romper.               ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+  -->
 
-        <section id="biografia">
-            <h2>El Legado</h2>
-            <p>Esta es una cápsula del tiempo digital, un muro de silicio que desafía al olvido tal como nuestros antepasados lo hicieron grabándose en la roca. Un espacio destinado a custodiar las ideas, los proyectos y las memorias que marcan el camino a través del tiempo.</p>
-        </section>
+  <main class="memorial">
 
-        <section id="videos">
-            <h2>Registros Audiovisuales</h2>
-            <p>Archivos y memorias compartidas. (Aquí podrás incrustar tus videos enlazados desde YouTube).</p>
-            
-            <div class="video-container">
-                <iframe src="about:blank" title="Espacio para Video Familiar"></iframe>
-            </div>
-        </section>
+    <!-- ===== LÍNEA DE FLOTACIÓN: nombre, fechas, epígrafe ===== -->
+    <header>
+      <h1>Gabriel Antonio Rivera Morales</h1>
+      <p class="fechas">
+        <time datetime="1979">1979</time> — <time datetime="2100">2100</time>
+      </p>
+      <hr class="filete">
+      <blockquote class="epigrafe">«Estuve aquí, existí, esto fue lo que amé.»</blockquote>
+    </header>
 
-        <footer>
-            <p>Cápsula del Tiempo Digital perpetuada en GitHub Pages</p>
-        </footer>
+    <!-- ===== BIOGRAFÍA / LEGADO ===== -->
+    <article id="biografia">
+      <h2>El Legado</h2>
+      <p>Esta es una cápsula del tiempo digital, un muro de silicio que desafía al olvido tal como nuestros antepasados lo hicieron grabándose en la roca. Un espacio destinado a custodiar las ideas, los proyectos y las memorias que marcan el camino a través del tiempo.</p>
+    </article>
 
-    </div>
+    <!--
+    ===== GALERÍA (plantilla — descomenta cuando tengas fotos en /assets) =====
+    <section id="galeria">
+      <h2>Memorias</h2>
+      <div class="galeria-grid">
+
+        <figure>
+          <picture>
+            <source srcset="assets/foto-1.avif" type="image/avif">
+            <source srcset="assets/foto-1.webp" type="image/webp">
+            <img src="assets/foto-1.jpg" alt="Descripción de la fotografía"
+                 width="1200" height="800" loading="lazy" decoding="async">
+          </picture>
+          <figcaption>Contexto de la fotografía.</figcaption>
+        </figure>
+
+        Copia el bloque <figure> de arriba por cada foto adicional.
+
+      </div>
+    </section>
+    -->
+
+    <!-- ===== REGISTROS AUDIOVISUALES (fachada de video) ===== -->
+    <section id="video">
+      <h2>Registros Audiovisuales</h2>
+      <p>Archivos y memorias compartidas. El video se carga solo al tocar “reproducir”, para no consumir datos hasta que lo necesites.</p>
+
+      <figure class="video">
+        <div class="video-box">
+          <!-- Reemplaza VIDEO_ID por el identificador del video de YouTube -->
+          <button type="button" class="video-trigger" data-id="VIDEO_ID"
+                  aria-label="Reproducir el video en memoria">
+            <span class="video-play" aria-hidden="true"></span>
+            <span>Reproducir video</span>
+          </button>
+        </div>
+        <!-- Si el JavaScript falla o desaparece en el futuro, este enlace sigue funcionando -->
+        <noscript>
+          <a href="https://www.youtube.com/watch?v=VIDEO_ID">Ver el video en YouTube</a>
+        </noscript>
+      </figure>
+    </section>
+
+    <footer>
+      <p><small>Cápsula del tiempo digital · perpetuada de forma estática.</small></p>
+    </footer>
+
+  </main>
+
+  <!-- ===========================================================
+       Activador de la fachada de video. Único JavaScript del sitio,
+       inerte hasta que se pulsa "reproducir". Sin dependencias.
+       =========================================================== -->
+  <script>
+    document.querySelectorAll('.video-trigger').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var iframe = document.createElement('iframe');
+        iframe.className = 'video-frame';
+        iframe.src = 'https://www.youtube-nocookie.com/embed/' + btn.dataset.id + '?autoplay=1';
+        iframe.title = 'Video en memoria';
+        iframe.allow = 'autoplay; fullscreen';
+        iframe.loading = 'lazy';
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        iframe.setAttribute('allowfullscreen', '');
+        btn.replaceWith(iframe);
+      });
+    });
+  </script>
+
+  <!-- ===========================================================
+       DESPLIEGUE EN GITHUB PAGES (recordatorio):
+       1. Sube este archivo como index.html a la raíz del repositorio
+          (sustituye la plantilla automática de GitHub).
+       2. Añade un archivo vacío llamado .nojekyll en la raíz.
+       3. Para un familiar adicional, crea una carpeta en minúsculas y
+          sin tildes (ej. /mama/) con su propio index.html dentro.
+       4. RECOMENDADO: registra un dominio propio, configúralo (CNAME) y
+          haz que el QR de la lápida apunte a ese dominio, no a github.io.
+          El QR impreso es para siempre; el dominio debe poder sobrevivir
+          aunque el hosting cambie.
+       =========================================================== -->
 
 </body>
 </html>
